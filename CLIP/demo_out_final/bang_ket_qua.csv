@@ -1,0 +1,5 @@
+﻿Dataset,Classes,Test Images,Model,Prompt,Top-1 (%),Top-5 (%),Time (s)
+CIFAR-10,10,10000,CLIP ViT-B/32,1 template,88.3,99.24,1101.38
+CIFAR-10,10,10000,CLIP ViT-B/32,18 template,89.83,99.61,1036.15
+CIFAR-100,100,10000,CLIP ViT-B/32,1 template,64.48,88.4,1087.82
+CIFAR-100,100,10000,CLIP ViT-B/32,18 template,65.08,89.23,1097.06

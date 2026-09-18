@@ -1,0 +1,93 @@
+{
+  "device": "cpu",
+  "torch": "2.14.0+cpu",
+  "prompt_mode": "ensemble",
+  "runs": [
+    {
+      "dataset": "CIFAR-10",
+      "backend": "openai",
+      "model": "CLIP ViT-B/32",
+      "n_classes": 10,
+      "load_time_sec": 5.3,
+      "text_encode_sec": 13.6,
+      "single": {
+        "index": 3637,
+        "ground_truth": "bird",
+        "topk": [
+          {
+            "label": "cat",
+            "prob": 0.7935929894447327
+          },
+          {
+            "label": "dog",
+            "prob": 0.07597179710865021
+          },
+          {
+            "label": "deer",
+            "prob": 0.04039066284894943
+          },
+          {
+            "label": "bird",
+            "prob": 0.03646918758749962
+          },
+          {
+            "label": "horse",
+            "prob": 0.030576759949326515
+          }
+        ],
+        "correct": false,
+        "image_encode_sec": 0.173
+      },
+      "eval": {
+        "n_images": 10000,
+        "top1_acc": 89.83,
+        "top5_acc": 99.61,
+        "total_sec": 1036.15,
+        "sec_per_image": 0.1036
+      }
+    },
+    {
+      "dataset": "CIFAR-100",
+      "backend": "openai",
+      "model": "CLIP ViT-B/32",
+      "n_classes": 100,
+      "load_time_sec": 5.3,
+      "text_encode_sec": 136.4,
+      "single": {
+        "index": 3637,
+        "ground_truth": "snake",
+        "topk": [
+          {
+            "label": "snake",
+            "prob": 0.655564546585083
+          },
+          {
+            "label": "turtle",
+            "prob": 0.18016527593135834
+          },
+          {
+            "label": "lizard",
+            "prob": 0.021539313718676567
+          },
+          {
+            "label": "crocodile",
+            "prob": 0.018550030887126923
+          },
+          {
+            "label": "leopard",
+            "prob": 0.01572819985449314
+          }
+        ],
+        "correct": true,
+        "image_encode_sec": 0.164
+      },
+      "eval": {
+        "n_images": 10000,
+        "top1_acc": 65.08,
+        "top5_acc": 89.23,
+        "total_sec": 1097.06,
+        "sec_per_image": 0.1097
+      }
+    }
+  ]
+}

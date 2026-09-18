@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">Kiến trúc CLIP</title>
+  <desc id="desc">Pipeline chính xác của CLIP gồm Image Encoder, Text Encoder, không gian embedding chung, contrastive loss và suy luận zero-shot.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfdff"/>
+      <stop offset="1" stop-color="#f5f8fc"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#17324d" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#405064"/>
+    </marker>
+    <style>
+      .title{font:700 38px 'Segoe UI',Arial,sans-serif;fill:#122033;letter-spacing:.5px}
+      .subtitle{font:400 18px 'Segoe UI',Arial,sans-serif;fill:#5b6b7d}
+      .section{font:700 18px 'Segoe UI',Arial,sans-serif;letter-spacing:1px}
+      .label{font:600 14px 'Segoe UI',Arial,sans-serif;fill:#172536;text-anchor:middle}
+      .small{font:400 12px 'Segoe UI',Arial,sans-serif;fill:#526173;text-anchor:middle}
+      .code{font:600 12px Consolas,'Courier New',monospace;fill:#213044;text-anchor:middle}
+      .formula{font:600 15px Cambria,'Times New Roman',serif;fill:#173d70;text-anchor:middle}
+      .panel{stroke-width:1.5;rx:18;filter:url(#shadow)}
+      .node{stroke-width:1.4;rx:10}
+      .image-panel{fill:#f1faf4;stroke:#5aa875}
+      .image-node{fill:#ffffff;stroke:#4a9b68}
+      .text-panel{fill:#f7f2fd;stroke:#8a67b9}
+      .text-node{fill:#ffffff;stroke:#8761b7}
+      .joint-panel{fill:#f1f7ff;stroke:#5185cb}
+      .joint-node{fill:#ffffff;stroke:#4e82c6}
+      .loss-node{fill:#fff7eb;stroke:#df8b32}
+      .zero-panel{fill:#fbfcfe;stroke:#5a78a8}
+      .output{fill:#e8f8f2;stroke:#268a67;stroke-width:2}
+      .arrow{fill:none;stroke:#405064;stroke-width:1.8;marker-end:url(#arrow)}
+      .soft{fill:none;stroke:#7c8a9a;stroke-width:1.4;stroke-dasharray:5 5;marker-end:url(#arrow)}
+      .chip{font:600 11px 'Segoe UI',Arial,sans-serif;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect width="1600" height="1050" fill="url(#bg)"/>
+  <text x="800" y="50" class="title" text-anchor="middle">KIẾN TRÚC CLIP</text>
+  <text x="800" y="79" class="subtitle" text-anchor="middle">Contrastive Language–Image Pre-training</text>
+  <rect x="680" y="91" width="240" height="28" rx="14" fill="#223a56"/>
+  <text x="800" y="110" class="chip" fill="#ffffff">HUẤN LUYỆN ĐỐI SÁNH</text>
+
+  <!-- Image encoder -->
+  <rect x="28" y="135" width="1055" height="290" class="panel image-panel"/>
+  <text x="555" y="165" class="section" fill="#287847" text-anchor="middle">IMAGE ENCODER</text>
+
+  <rect x="50" y="237" width="88" height="76" class="node image-node"/>
+  <text x="94" y="269" class="label">Ảnh</text>
+  <text x="94" y="292" class="small">[N, 3, H, W]</text>
+  <rect x="170" y="237" width="105" height="76" class="node image-node"/>
+  <text x="222" y="267" class="label">Tiền xử lý</text>
+  <text x="222" y="288" class="small">Resize · Crop</text>
+  <text x="222" y="304" class="small">Normalize</text>
+  <path d="M138 275 H170" class="arrow"/>
+
+  <rect x="310" y="176" width="128" height="66" class="node image-node"/>
+  <text x="374" y="204" class="label">Modified</text>
+  <text x="374" y="224" class="label">ResNet</text>
+  <rect x="470" y="176" width="112" height="66" class="node image-node"/>
+  <text x="526" y="204" class="label">3-layer stem</text>
+  <text x="526" y="224" class="small">anti-aliasing</text>
+  <rect x="614" y="176" width="108" height="66" class="node image-node"/>
+  <text x="668" y="204" class="label">Bottleneck</text>
+  <text x="668" y="224" class="label">× L</text>
+  <rect x="754" y="176" width="126" height="66" class="node image-node"/>
+  <text x="817" y="205" class="label">AttentionPool2d</text>
+  <text x="817" y="225" class="small">QKV attention</text>
+  <rect x="912" y="176" width="92" height="66" class="node image-node"/>
+  <text x="958" y="214" class="code">c_proj</text>
+
+  <rect x="310" y="316" width="128" height="66" class="node image-node"/>
+  <text x="374" y="344" class="label">Vision</text>
+  <text x="374" y="364" class="label">Transformer</text>
+  <rect x="470" y="316" width="112" height="66" class="node image-node"/>
+  <text x="526" y="344" class="label">Chia ảnh</text>
+  <text x="526" y="364" class="label">thành patch</text>
+  <rect x="614" y="316" width="108" height="66" class="node image-node"/>
+  <text x="668" y="342" class="label">Class token</text>
+  <text x="668" y="362" class="small">+ Position</text>
+  <rect x="754" y="316" width="126" height="66" class="node image-node"/>
+  <text x="817" y="344" class="label">Transformer</text>
+  <text x="817" y="364" class="label">× L</text>
+  <rect x="912" y="316" width="92" height="66" class="node image-node"/>
+  <text x="958" y="341" class="code">ln_post</text>
+  <text x="958" y="361" class="code">visual.proj</text>
+
+  <path d="M275 275 H290 V209 H310" class="arrow"/>
+  <path d="M275 275 H290 V349 H310" class="arrow"/>
+  <path d="M438 209 H470" class="arrow"/>
+  <path d="M582 209 H614" class="arrow"/>
+  <path d="M722 209 H754" class="arrow"/>
+  <path d="M880 209 H912" class="arrow"/>
+  <path d="M438 349 H470" class="arrow"/>
+  <path d="M582 349 H614" class="arrow"/>
+  <path d="M722 349 H754" class="arrow"/>
+  <path d="M880 349 H912" class="arrow"/>
+
+  <rect x="1020" y="237" width="48" height="76" class="node image-node"/>
+  <text x="1044" y="265" class="label">I</text>
+  <text x="1044" y="285" class="small">Image</text>
+  <text x="1044" y="301" class="small">embedding</text>
+  <path d="M1004 209 H1012 V260 H1020" class="arrow"/>
+  <path d="M1004 349 H1012 V290 H1020" class="arrow"/>
+
+  <!-- Text encoder -->
+  <rect x="28" y="445" width="1055" height="235" class="panel text-panel"/>
+  <text x="555" y="478" class="section" fill="#68449a" text-anchor="middle">TEXT ENCODER</text>
+
+  <rect x="48" y="530" width="88" height="70" class="node text-node"/>
+  <text x="92" y="571" class="label">Caption</text>
+  <rect x="158" y="530" width="104" height="70" class="node text-node"/>
+  <text x="210" y="558" class="label">Byte-level</text>
+  <text x="210" y="579" class="label">BPE</text>
+  <rect x="284" y="530" width="108" height="70" class="node text-node"/>
+  <text x="338" y="557" class="label">SOT / EOT</text>
+  <text x="338" y="579" class="small">77 tokens</text>
+  <rect x="414" y="530" width="120" height="70" class="node text-node"/>
+  <text x="474" y="554" class="label">Token + Position</text>
+  <text x="474" y="577" class="label">embedding</text>
+  <rect x="556" y="530" width="126" height="70" class="node text-node"/>
+  <text x="619" y="554" class="label">Causal</text>
+  <text x="619" y="576" class="label">Transformer × L</text>
+  <rect x="704" y="530" width="120" height="70" class="node text-node"/>
+  <text x="764" y="554" class="code">ln_final</text>
+  <text x="764" y="577" class="label">→ chọn EOT</text>
+  <rect x="846" y="530" width="112" height="70" class="node text-node"/>
+  <text x="902" y="570" class="code">text_projection</text>
+  <rect x="980" y="530" width="82" height="70" class="node text-node"/>
+  <text x="1021" y="558" class="label">T</text>
+  <text x="1021" y="579" class="small">Text embedding</text>
+
+  <path d="M136 565 H158" class="arrow"/>
+  <path d="M262 565 H284" class="arrow"/>
+  <path d="M392 565 H414" class="arrow"/>
+  <path d="M534 565 H556" class="arrow"/>
+  <path d="M682 565 H704" class="arrow"/>
+  <path d="M824 565 H846" class="arrow"/>
+  <path d="M958 565 H980" class="arrow"/>
+  <rect x="546" y="622" width="146" height="34" rx="17" fill="#eee5fa" stroke="#8761b7"/>
+  <text x="619" y="644" class="small">Causal mask [77 × 77]</text>
+  <path d="M619 622 V601" class="soft"/>
+
+  <!-- Joint space -->
+  <rect x="1112" y="135" width="460" height="545" class="panel joint-panel"/>
+  <text x="1342" y="164" class="section" fill="#285eaa" text-anchor="middle">KHÔNG GIAN EMBEDDING CHUNG</text>
+  <rect x="1165" y="208" width="145" height="54" class="node joint-node"/>
+  <text x="1237" y="240" class="label">L2 normalize (I)</text>
+  <rect x="1374" y="208" width="145" height="54" class="node joint-node"/>
+  <text x="1446" y="240" class="label">L2 normalize (T)</text>
+  <path d="M1068 275 H1136 V235 H1165" class="arrow"/>
+  <path d="M1062 565 H1100 V292 H1446 V262" class="arrow"/>
+
+  <rect x="1190" y="300" width="305" height="62" class="node joint-node"/>
+  <text x="1342" y="338" class="formula">S = exp(logit_scale) · I · Tᵀ</text>
+  <path d="M1237 262 V282 H1342 V300" class="arrow"/>
+  <path d="M1446 262 V282 H1342 V300" class="arrow"/>
+  <rect x="1205" y="394" width="275" height="64" class="node joint-node"/>
+  <text x="1342" y="421" class="label">Ma trận tương đồng N × N</text>
+  <text x="1342" y="443" class="small">Đường chéo: các cặp đúng</text>
+  <path d="M1342 362 V394" class="arrow"/>
+  <rect x="1205" y="490" width="275" height="60" class="node loss-node"/>
+  <text x="1342" y="517" class="label">Symmetric cross-entropy</text>
+  <text x="1342" y="538" class="small">Image → Text và Text → Image</text>
+  <path d="M1342 458 V490" class="arrow"/>
+  <rect x="1205" y="580" width="275" height="62" class="node loss-node"/>
+  <text x="1342" y="618" class="formula">L = (L_image + L_text) / 2</text>
+  <path d="M1342 550 V580" class="arrow"/>
+
+  <!-- Zero-shot -->
+  <rect x="28" y="720" width="1544" height="292" class="panel zero-panel"/>
+  <rect x="646" y="704" width="308" height="34" rx="17" fill="#285eaa"/>
+  <text x="800" y="727" class="chip" fill="#ffffff">SUY LUẬN ZERO-SHOT</text>
+
+  <rect x="55" y="780" width="98" height="62" class="node text-node"/>
+  <text x="104" y="817" class="label">Tên lớp</text>
+  <rect x="188" y="780" width="220" height="62" class="node text-node"/>
+  <text x="298" y="807" class="label">Prompt</text>
+  <text x="298" y="827" class="code">a photo of a {class}</text>
+  <rect x="443" y="780" width="145" height="62" class="node text-node"/>
+  <text x="515" y="817" class="label">Text Encoder</text>
+  <rect x="623" y="780" width="154" height="62" class="node text-node"/>
+  <text x="700" y="807" class="label">Class embeddings</text>
+  <text x="700" y="827" class="small">T₁, T₂, …, Tₖ</text>
+
+  <rect x="55" y="900" width="98" height="62" class="node image-node"/>
+  <text x="104" y="937" class="label">Ảnh mới</text>
+  <rect x="188" y="900" width="130" height="62" class="node image-node"/>
+  <text x="253" y="937" class="label">Tiền xử lý</text>
+  <rect x="353" y="900" width="145" height="62" class="node image-node"/>
+  <text x="425" y="937" class="label">Image Encoder</text>
+  <rect x="533" y="900" width="164" height="62" class="node image-node"/>
+  <text x="615" y="927" class="label">Image embedding</text>
+  <text x="615" y="947" class="small">I</text>
+
+  <rect x="842" y="840" width="145" height="70" class="node joint-node"/>
+  <text x="914" y="870" class="label">Cosine similarity</text>
+  <text x="914" y="892" class="small">I · Tᵀ</text>
+  <rect x="1022" y="840" width="110" height="70" class="node joint-node"/>
+  <text x="1077" y="881" class="label">Softmax</text>
+  <rect x="1167" y="830" width="180" height="90" rx="12" class="output"/>
+  <text x="1257" y="866" class="label">Nhãn dự đoán</text>
+  <text x="1257" y="890" class="small">xác suất cao nhất</text>
+  <rect x="1380" y="830" width="150" height="90" rx="12" fill="#eef3f8" stroke="#8da0b5"/>
+  <text x="1455" y="859" class="small">Không cần</text>
+  <text x="1455" y="881" class="label">fine-tuning</text>
+  <text x="1455" y="902" class="small">theo dataset</text>
+
+  <path d="M153 811 H188" class="arrow"/>
+  <path d="M408 811 H443" class="arrow"/>
+  <path d="M588 811 H623" class="arrow"/>
+  <path d="M153 931 H188" class="arrow"/>
+  <path d="M318 931 H353" class="arrow"/>
+  <path d="M498 931 H533" class="arrow"/>
+  <path d="M777 811 H808 V860 H842" class="arrow"/>
+  <path d="M697 931 H808 V890 H842" class="arrow"/>
+  <path d="M987 875 H1022" class="arrow"/>
+  <path d="M1132 875 H1167" class="arrow"/>
+  <path d="M1347 875 H1380" class="soft"/>
+
+  <text x="800" y="1037" class="small">Ánh xạ theo source code chính thức: clip/model.py · clip/clip.py · clip/simple_tokenizer.py</text>
+</svg>
